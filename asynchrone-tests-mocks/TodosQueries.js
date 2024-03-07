@@ -13,7 +13,7 @@ async function fetchTodoById(todoId) {
     params: { todoId },
   });
 
-  const todo = result.data.todos;
+  const todo = result.data.todo;
 
   console.log("Mein Todo /byid", todo);
 
@@ -25,11 +25,11 @@ async function fetchTodoByUserId(userId) {
     params: { userId },
   });
 
-  const todo = result.data.todo;
+  const todos = result.data.todos;
 
-  console.log("Mein Todo /byuserid", todo);
+  console.log("Mein Todo /byuserid", todos);
 
-  return todo;
+  return todos;
 }
 
 module.exports = { fetchAllTodos, fetchTodoById, fetchTodoByUserId };

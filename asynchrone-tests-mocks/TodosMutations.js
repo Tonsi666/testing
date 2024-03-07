@@ -1,35 +1,50 @@
 const axios = require("axios");
 
-async function fetchAllTodos() {
-  const result = await axios.get("http://localhost:5050/v1/todos/all");
-
-  const todos = result.data;
-
-  return todos;
-}
-
-async function fetchTodoById(todoId) {
-  const result = await axios.get("http://localhost:5050/v1/todos/byid", {
-    params: { todoId },
+async function createTodo(newUserId, task, isDone, dueDate) {
+  const result = await axios.post("http://localhost:5050/v1/todos/create", {
+    newUserId: newUserId,
+    newTask: task,
+    newIsDone: isDone,
+    newDueDate: dueDate,
   });
 
-  const todo = result.data.todos;
+  const newTodo = result.data.todo;
 
-  console.log("Mein Todo /byid", todo);
+  return newTodo;
+}
+
+async function markTodo(todoId, isDone) {
+  const result = await axios.put("http://localhost:5050/v1/todos/mark", {
+    todoId: todoId,
+    newIsDone: isDone,
+  });
+
+  const todo = result.data.updatedTodo;
 
   return todo;
 }
 
-async function fetchTodoByUserId(userId) {
-  const result = await axios.get("http://localhost:5050/v1/todos/byuserid", {
-    params: { userId },
+async function updateTodo(updateId, updateTask, updateIsDone, updateDueDate) {
+  const result = await axios.put("http://localhost:5050/v1/todos/update", {
+    todoId: updateId,
+    newTask: updateTask,
+    newIsDone: updateIsDone,
+    newDueDate: updateDueDate,
   });
 
-  const todo = result.data.todo;
-
-  console.log("Mein Todo /byuserid", todo);
+  const todo = result.data.updatedTodo;
 
   return todo;
 }
 
-module.exports = { fetchAllTodos, fetchTodoById, fetchTodoByUserId };
+async function deleteTodo(todoId) {
+  const result = await axios.delete("http://localhost:5050/v1/todos/delete", {
+    data: { todoId },
+  });
+
+  const deletedTodoId = result.data.deletedTodosId;
+
+  return deletedTodoId;
+}
+
+module.exports = { createTodo, markTodo, updateTodo, deleteTodo };

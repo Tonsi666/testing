@@ -16,14 +16,13 @@ const returnedTodo1 = {
 
 describe("Testing POST Functions of Todo Route", () => {
   afterEach(() => {
-    axios.mockRestore();
+    jest.clearAllMocks();
   });
 
   test("Teste POST Create Funktion", async () => {
     const mockData = {
       data: { todo: returnedTodo1 },
     };
-
     axios.post.mockResolvedValue(mockData);
     const myDate = new Date();
     const result = await TodosMutations.createTodo(1, "Essen", false, myDate);
@@ -32,40 +31,55 @@ describe("Testing POST Functions of Todo Route", () => {
     expect(axios.post).toHaveBeenCalledTimes(1);
     expect(axios.post).toHaveBeenCalledWith(
       "http://localhost:5050/v1/todos/create",
-      { newDueDate: myDate, newIsDone: false, newTask: "Essen", newUserid: 1 }
+      { newDueDate: myDate, newIsDone: false, newTask: "Essen", newUserId: 1 }
     );
   });
 
-  test("Teste GET ById Funktion", async () => {
-    const myInput = {
-      data: { todo: returnedTodo1 },
+  test("Teste POST Mark Funktion", async () => {
+    const mockData = {
+      data: { updatedTodo: returnedTodo1 },
     };
+    axios.put.mockResolvedValue(mockData);
 
-    axios.get.mockResolvedValue(myInput);
+    const todoId = 48;
+    const isDone = true;
+    const result = await TodosMutations.markTodo(todoId, isDone);
 
-    const result = await TodosQueries.fetchTodoById(6);
-
-    expect(result).toEqual(myInput.data.todo);
-    expect(axios.get).toHaveBeenCalledTimes(2);
-    expect(axios.get).toHaveBeenCalledWith(
-      "http://localhost:5050/v1/todos/byid",
-      { params: { todoId: 6 } }
+    expect(result).toEqual(mockData.data.updatedTodo);
+    expect(axios.put).toHaveBeenCalledTimes(1);
+    expect(axios.put).toHaveBeenCalledWith(
+      "http://localhost:5050/v1/todos/mark",
+      { todoId: todoId, newIsDone: isDone }
     );
   });
 
-  test("Teste GET ByUserId Funktion", async () => {
-    const userId = 1;
-    const mockData = { data: { todos: [returnedTodo1] } };
+  test("Teste POST Update Funktion", async () => {
+    const mockData = {
+      data: { updatedTodo: returnedTodo1 },
+    };
+    axios.put.mockResolvedValue(mockData);
 
-    axios.get.mockResolvedValue(mockData);
+    const updateId = 72;
+    const updateTask = "Neue Aufgabe";
+    const updateIsDone = false;
+    const updateDueDate = "2024-03-15T00:00:00.000Z"; // Beispiel-Datum
+    const result = await TodosMutations.updateTodo(
+      updateId,
+      updateTask,
+      updateIsDone,
+      updateDueDate
+    );
 
-    const result = await TodosQueries.fetchTodoByUserId(userId);
-
-    expect(result).toEqual(mockData.data.todos);
-    expect(axios.get).toHaveBeenCalledTimes(2);
-    expect(axios.get).toHaveBeenCalledWith(
-      "http://localhost:5050/v1/todos/byuserid",
-      { params: { userId: 1 } }
+    expect(result).toEqual(mockData.data.updatedTodo);
+    expect(axios.put).toHaveBeenCalledTimes(1);
+    expect(axios.put).toHaveBeenCalledWith(
+      "http://localhost:5050/v1/todos/update",
+      {
+        todoId: updateId,
+        newTask: updateTask,
+        newIsDone: updateIsDone,
+        newDueDate: updateDueDate,
+      }
     );
   });
 });
